@@ -1,0 +1,15 @@
+Channel:
+  name: coinbase-1
+  a-feed: 204.0.0.1:10000
+  b-feed: 204.0.0.101:14000
+  products:
+    BTC-USD: 10000
+    BTC-EUR: 10001
+    ETH-USD: 10002
+    ETH-EUR: 10003
+    SOL-USD: 10007
+    AVAX-USD: 10008
+    ADA-USD: 10009
+    MATIC-USD: 10010
+    LINK-USD: 10011
+    SHIB-USD: 10031
