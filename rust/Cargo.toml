@@ -1,0 +1,10 @@
+[package]
+name = "finslice_md"
+version = "0.1.0"
+authors = ["sbetool"]
+description = "null"
+edition = "2018"
+
+[lib]
+name = "finslice_md"
+path = "src/lib.rs"

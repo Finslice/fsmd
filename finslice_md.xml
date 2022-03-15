@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema xmlns:sbe="http://www.fixprotocol.io/2017/sbe"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   package="finslice_md" id="1" version="1" byteOrder="littleEndian"
+                   xsi:schemaLocation="http://fixprotocol/io/2017/sbe sbe-2.0rc2.xsd">
+    <types>
+      <type name="PairName" description="Symbol" length="12" primitiveType="char" semanticType="String"/>
+      <type name="DoubleT" description="Double format" primitiveType="double" semanticType="double"/>
+      <type name="OrderID36" description="OrderID 36 bytes" length="36" primitiveType="char" semanticType="String"/>
+        <composite name="groupSize" description="Repeating group dimensions" semanticType="NumInGroup">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="numInGroup" primitiveType="uint8"/>
+        </composite>
+        <composite name="messageHeader" description="Template ID and length of message root">
+            <type name="blockLength" primitiveType="uint16"/>
+            <type name="templateId" primitiveType="uint16"/>
+            <type name="schemaId" primitiveType="uint16"/>
+            <type name="version" primitiveType="uint16"/>
+        </composite>
+        <enum name="SideType" encodingType="uint8">
+            <validValue name="NoSide" description="No Side">0</validValue>
+            <validValue name="Buy" description="Buy">1</validValue>
+            <validValue name="Sell" description="Sell">2</validValue>
+        </enum>
+        <enum name="OrderActionType" encodingType="uint8">
+            <validValue name="NewMarketOrder" description="New Market Order">1</validValue>
+            <validValue name="NewLimitOrder" description="New Limit Order">2</validValue>
+            <validValue name="OrderOpen" description="Order Open">3</validValue>
+            <validValue name="OrderFilled" description="Order done Filled">8</validValue>
+            <validValue name="OrderCancel" description="Order done Cancelled">9</validValue>
+            <validValue name="MatchEvent" description="Match(trade)">12</validValue>
+            <validValue name="OrderChange" description="Order size changed">13</validValue>
+        </enum>
+        <set name="SetMDAttribute" encodingType="uint8">
+            <choice name="Side" description="1=Sell, 0=Buy">0</choice>
+            <choice name="OrderType" description="1=Limit, 0=Market">1</choice>
+            <choice name="Done" description="1=Done, 0=Open">2</choice> 
+        </set>
+    </types>
+    <sbe:message name="OrderUpdate" id="20" description="Single Order Action" blockLength="76" semanticType="D">
+        <field name="TransactTime" id="60" type="uint64" description="Exchange Timestamp" offset="0" semanticType="UTCTimestamp"/>
+        <field name="SecurityID" id="48" type="uint32" description="Pair ID" offset="8" semanticType="int"/>
+        <field name="OrderAction" id="279" type="OrderActionType" description="Order Action" offset="12" semanticType="int"/>
+        <field name="Side" id="54" type="SideType" description="Side" offset="13" semanticType="int"/>
+        <field name="Price" id="270" type="DoubleT" description="Price" offset="16" semanticType="double"/>
+        <field name="Size" id="271" type="DoubleT" description="Size" offset="24" semanticType="double"/>
+        <field name="SecuritySequence" id="83" type="uint64" description="Per security sequence" offset="32" semanticType="int"/>
+        <field name="OrderID" id="37" type="OrderID36" description="Unique Order ID" offset="40" semanticType="String"/>
+    </sbe:message>
+    <sbe:message name="MatchEvent" id="42" description="Order Matched" blockLength="120" semanticType="X">
+        <field name="TransactTime" id="60" type="uint64" description="Exchange Timestamp" offset="0" semanticType="UTCTimestamp"/>
+        <field name="SecurityID" id="48" type="uint32" description="Pair ID" offset="8" semanticType="int"/>
+        <field name="OrderAction" id="279" type="OrderActionType" description="Order Action" offset="12" semanticType="int"/>
+        <field name="MakerSide" id="54" type="SideType" description="Side" offset="13" semanticType="int"/>
+        <field name="Price" id="270" type="DoubleT" description="Price" offset="16" semanticType="double"/>
+        <field name="Size" id="271" type="DoubleT" description="Size" offset="24" semanticType="double"/>
+        <field name="SecuritySequence" id="83" type="uint64" description="Per security sequence" offset="32" semanticType="int"/>
+        <field name="MakerOrderID" id="37" type="OrderID36" description="Maker Order ID" offset="40" semanticType="String"/>
+        <field name="TradeID" id="76" type="uint64" description="Trade ID" offset="76" semanticType="int"/>
+        <field name="TakerOrderID" id="11" type="OrderID36" description="Taker Order ID" offset="84" semanticType="String"/>
+    </sbe:message>
+    <sbe:message name="OrderChange" id="50" description="Order Modify down" blockLength="84" semanticType="X">
+        <field name="TransactTime" id="60" type="uint64" description="Exchange Timestamp" offset="0" semanticType="UTCTimestamp"/>
+        <field name="SecurityID" id="48" type="uint32" description="Pair ID" offset="8" semanticType="int"/>
+        <field name="OrderAction" id="279" type="OrderActionType" description="Order Action" offset="12" semanticType="int"/>
+        <field name="Side" id="54" type="SideType" description="Side" offset="13" semanticType="int"/>
+        <field name="Price" id="270" type="DoubleT" description="Price" offset="16" semanticType="double"/>
+        <field name="NewSize" id="271" type="DoubleT" description="Updated Size" offset="24" semanticType="double"/>
+        <field name="SecuritySequence" id="83" type="uint64" description="Per security sequence" offset="32" semanticType="int"/>
+        <field name="OrderID" id="37" type="OrderID36" description="Unique Order ID" offset="40" semanticType="String"/>
+        <field name="OldSize" id="273" type="DoubleT" description="Previous order size" offset="76" semanticType="double"/>
+    </sbe:message>
+</sbe:messageSchema>
